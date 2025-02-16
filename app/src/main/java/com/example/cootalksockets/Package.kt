@@ -86,7 +86,7 @@ class Package {
 
         j=72
         if (sizeData!!.toInt() > 0) {
-            data.copyInto(pkg, j)
+            data.copyInto(pkg, j, 0, sizeData.toInt())
         }
 
         return pkg
@@ -126,7 +126,20 @@ class Package {
         buffer[offset + 0] = (data shr 8).toByte()
     }
 
+    fun dataToJson(): JSONObject {
 
+        var jsonStr = dataToString()
+
+        //uncomment if smth doesn't work
+        //var JSON_Str = JSONObject.quote(pkgDataStr)
+
+        var JSON_Object = JSONObject(jsonStr)
+
+        return JSON_Object
+
+    }
+
+    //instead of method Sip.uppackSIPData
     fun jsonToData(JSON_Object: JSONObject) {
 
         var JSON_Str = JSON_Object.toString()

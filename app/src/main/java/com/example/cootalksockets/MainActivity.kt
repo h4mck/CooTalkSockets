@@ -21,6 +21,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
     val client = Client()
     val ACTION_ACCEPT_CALL = "101"
-    val sip = Sip()
+    val ctClient = CT_Client()
 
 
     @SuppressLint("NewApi")
@@ -127,23 +128,36 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this, "Connecting: ${binding.editTextText.text}", Toast.LENGTH_SHORT)
                 .show()
 
+
             Executors.newSingleThreadExecutor().execute {
 
-                val ctClient = CT_Client()
-                val hostIP = "89.111.173.78"
-                val neededPort = 12345
+                ctClient.init(clientName)
 
-                ctClient.auth(clientName)
-
-                while (true) {
-
+                if (ctClient.setup(ctClient.SERVERIP, ctClient.PORT)) {
+                    if (ctClient.auth()) {
+                        //Toast.makeText(this, "Login complete", Toast.LENGTH_SHORT)
+                        //    .show()
+                    } else {
+                        //Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT)
+                        //    .show()
+                    }
                 }
+
+
 
                 //other tcp handlers work in this thread
 //                Executors.newSingleThreadExecutor().execute {
 //
 //                }
-                
+
+            }
+
+        }
+
+        binding.buttonCh1.setOnClickListener {
+
+            Executors.newSingleThreadExecutor().execute {
+                ctClient.sip.sendConnect("ch1")
             }
 
         }
@@ -368,7 +382,7 @@ class MainActivity : ComponentActivity() {
         }
 
         binding.buttonTest.setOnClickListener {
-            sip.createConnectPkg("test")
+            ctClient.sip.createConnectPkg("test")
         }
 
         }
