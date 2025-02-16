@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/linearLayout">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="bottom|center_horizontal"
+        android:text="Enter your login:"
+        android:textSize="30dp"/>
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Login"
+        android:layout_marginTop="100dp"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CONNECT"
+        android:layout_marginTop="100dp"/>
+
+    <Button
+        android:id="@+id/buttonChk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Check Sound"
+        android:layout_marginTop="100dp"/>
+
+    <Button
+        android:id="@+id/buttonChkCallAlert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Alert" />
+
+    <Button
+        android:id="@+id/buttonChkMediaAlert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Media Alert" />
+
+    <Button
+        android:id="@+id/buttonChkMediaAlert2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Media Alert 2" />
+
+    <Button
+        android:id="@+id/buttonTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sip Test" />
+
+
+</LinearLayout>

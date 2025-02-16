@@ -1,0 +1,32 @@
+package com.example.cootalksockets
+
+import org.json.JSONObject
+import org.json.JSONArray
+
+class ChDes {
+
+    var id = ""
+    var port = -1
+    var users: MutableSet<String> = mutableSetOf<String>()
+
+    fun unpackSession(jsonObject: JSONObject) {
+
+        var talkDes: JSONObject = jsonObject.getJSONObject("Talk-Des")
+        id = talkDes.getString("ID")
+        port = talkDes.getInt("Port")
+        var result: JSONArray = talkDes.getJSONArray("Users")
+
+        //may cause problems
+        for (i in 0..result.length()-1) {
+            users.add(result[i].toString())
+        }
+
+    }
+
+    fun clear() {
+        id = ""
+        port = -1
+        users.clear()
+    }
+
+}
