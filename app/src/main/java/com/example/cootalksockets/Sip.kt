@@ -1,19 +1,26 @@
 package com.example.cootalksockets
 
+import android.content.Context
+import android.os.SystemClock
 import android.util.Log
 import java.util.Queue
 import com.example.cootalksockets.TCP_Client
+import com.example.cootalksockets.Talk
+import com.example.cootalksockets.UDP_Client
 import org.json.JSONObject
 import com.example.cootalksockets.Package
 import org.json.JSONException
+import java.util.LinkedList
 
 class Sip {
 
     var tcpClient = TCP_Client()
+    var udpClient = UDP_Client()
+    var talk = Talk()
 
 
     //may cause problems
-    var curOutgoingPackages: Queue<Package>? = null
+    var curOutgoingPackages: Queue<Package> = LinkedList()
     var curUser = ""
     var toUserSip = ""
     var SIPState = ""
@@ -22,43 +29,52 @@ class Sip {
 
     fun handle(pkg: Package): Boolean {
 
+        Log.i("SIP_HANDLE", pkg.data.toString())
         var jobj = pkg.dataToJson()
+        Log.i("SIP_HANDLE", jobj.toString())
 
         if (jobj["Type"] == "REQUEST") {
             if (jobj["Method"] == "SESSION") {
                 return sessionHandler(jobj)
             }
             else if (jobj["Method"] == "UPDATE") {
-                //return updateHandler(jobj)
+                return updateHandler(jobj)
             }
         }
 
         return true
     }
 
-//    private fun updateHandler(jsonObject: JSONObject): Boolean {
-//
-//        if (currUDP.currChannel.id == jsonObject.getJSONObject("Talk-Des").getString("ID")) {
-//
-//            if (jsonObject["Action"] == "connect") {
-//                currUDP.createNewRecieveThread(jsonObject["From"])
-//            }
-//            else if (jsonObject["Action"] == "disconnect") {
-//                Log.i("SIP-INFO", "User ${jsonObject["From"]} disconnected")
-//            }
-//
-//        }
-//        return true
-//
-//    }
+    private fun updateHandler(jsonObject: JSONObject): Boolean {
+
+        if (talk.currCh.id == jsonObject.getJSONObject("Talk-Des").getString("ID")) {
+
+            if (jsonObject["Action"] == "connect") {
+                currCh.users.add(jsonObject["From"].toString())
+                talk.addUser(jsonObject["From"].toString())
+            }
+            else if (jsonObject["Action"] == "disconnect") {
+                Log.i("SIP-INFO", "User ${jsonObject["From"]} disconnected")
+                talk.delUser(jsonObject["From"].toString())
+            }
+
+        }
+        return true
+
+    }
 
     private fun sessionHandler(jsonObject: JSONObject): Boolean {
 
         var ch = ChDes()
+        ch.timeInfo.cpuTime = SystemClock.uptimeMillis()
         ch.unpackSession(jsonObject)
         currCh = ch
 
+        Log.i("SIP_SESSION_HANDLER", "Current time in Ch Desc is: ${ch.timeInfo.cpuTime}")
+
         Log.i("SIP-INFO", "UDP STARTS")
+
+        talk.start(ch, curUser)
 
         return true
 
@@ -110,8 +126,8 @@ class Sip {
         //instead method Sip.uppackSIPData
         conPkg.jsonToData(jobj)
         //DEBUG
-        Log.i(null, "$jobj")
-        Log.i(null, jobj.toString())
+        Log.i("SIP_CR_CON_PKG", "$jobj")
+        Log.i("SIP_CR_CON_PKG", jobj.toString())
 
 
         return conPkg
@@ -134,5 +150,8 @@ class Sip {
 
     }
 
+    fun release() {
+        //talk.codecRelease()
+    }
     
 }

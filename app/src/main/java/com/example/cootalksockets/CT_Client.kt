@@ -41,7 +41,8 @@ class CT_Client: TCP_Client() {
                 //if smth doesn't work, change servSoc to socket
                 pkg = recvPkg(sock!!)
 
-                Log.i("I-CTC-PKG", "${pkg.type} ${pkg.subtype} ${pkg.toUser} ${pkg.fromUser}")
+                //Log.i("I-CTC-PKG", "${pkg.type} ${pkg.subtype} ${pkg.toUser} ${pkg.fromUser}")
+                //Log.i("I-CTC-PKG", pkg.data.toString())
 
                 if (pkg.type == T_REQUEST ||
                     pkg.type == T_RESPONSE ||
@@ -78,18 +79,18 @@ class CT_Client: TCP_Client() {
 
         pkg = recvPkg(sock!!)
 
-        Log.i("I-CTC-AUTH-PKG", pkg.data.toString())
+        //Log.i("I-CTC-AUTH-PKG", pkg.data.toString())
 
         if (pkg.type == T_RESPONSE && pkg.subtype == ST_AUTH) {
             isAuth = true
             return true
         } else {
             if (pkg.subtype == ET_USREXIST) {
-                Log.i("I-CTC-AUTH-RES", "User with the same name already exists")
+                //Log.i("I-CTC-AUTH-RES", "User with the same name already exists")
             } else if (pkg.subtype == ET_USRINCORRECT) {
-                Log.i("I-CTC-AUTH-RES", "Username is incorrect")
+                //Log.i("I-CTC-AUTH-RES", "Username is incorrect")
             } else {
-                Log.i("I-CTC-AUTH-RES", "Error")
+                //Log.i("I-CTC-AUTH-RES", "Error")
             }
             return false
         }
@@ -116,6 +117,10 @@ class CT_Client: TCP_Client() {
 
         }
 
+    }
+
+    fun release() {
+        sip.release()
     }
 
 }

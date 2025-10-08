@@ -13,14 +13,11 @@ open class TCP_Client {
 
 
     val SERVERIP = "89.111.173.78"
-    //val SERVERIP = "192.168.84.249"
+    //val SERVERIP = "192.168.235.249"
     val PORT = 12345
-    val MXPKGSZ = 65635
+    val MXPKGSZ = 65536
     val HDRSZ = 72
-
-    val AUDIOPKGSZ = 1016
-    val AUDIOHDRSZ = 56
-    val AUDIOSZ = 960
+    val MXDATASZ = 65464
 
     val T_RESPONSE = 'R'
     val T_REQUEST = 'r'
@@ -94,27 +91,27 @@ open class TCP_Client {
 
         if (pkg.type == null) {
             //change debug method
-            println("pkg.type is empty")
+            //println("pkg.type is empty")
         }
 
         if (pkg.subtype == null) {
             //change debug method
-            println("pkg.subtype is empty")
+            //println("pkg.subtype is empty")
         }
 
         if (pkg.sizeData == null) {
             //change debug method
-            println("pkg.sizeData is empty")
+            //println("pkg.sizeData is empty")
         }
 
         if (pkg.toUser == "") {
             //change debug method
-            println("pkg.toUser is empty")
+            //println("pkg.toUser is empty")
         }
 
         if (pkg.fromUser == "") {
             //change debug method
-            println("pkg.fromUser is empty")
+            //println("pkg.fromUser is empty")
         }
 
         val pkgSize = HDRSZ + pkg.sizeData.toInt()
