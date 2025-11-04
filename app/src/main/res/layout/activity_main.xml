@@ -30,11 +30,23 @@
         android:layout_marginTop="100dp"/>
 
     <Button
+        android:id="@+id/buttonCh1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Connect to channel 1" />
+
+    <Button
+        android:id="@+id/buttonCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Check Sound" />
+
+    <Button
         android:id="@+id/buttonChk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Check Sound"
-        android:layout_marginTop="100dp"/>
+        android:text="Shit"
+        android:layout_marginTop="10dp"/>
 
     <Button
         android:id="@+id/buttonChkCallAlert"

@@ -7,10 +7,12 @@ class ChDes {
 
     var id = ""
     var port = -1
+    var timeInfo = TimeInfo()
     var users: MutableSet<String> = mutableSetOf<String>()
 
     fun unpackSession(jsonObject: JSONObject) {
 
+        timeInfo.conTime = jsonObject.getLong("ConnectTime")
         var talkDes: JSONObject = jsonObject.getJSONObject("Talk-Des")
         id = talkDes.getString("ID")
         port = talkDes.getInt("Port")
@@ -28,5 +30,12 @@ class ChDes {
         port = -1
         users.clear()
     }
+
+}
+
+class TimeInfo {
+
+    var conTime = 0L
+    var cpuTime = 0L
 
 }

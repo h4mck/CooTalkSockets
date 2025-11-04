@@ -12,6 +12,7 @@ class CT_Client: TCP_Client() {
     var currentUser: String? = null
     var sip = Sip()
     val outgoingPackages: Queue<Package> = LinkedList()
+    var isAuth = false
 
     //constructor?
 
@@ -34,21 +35,19 @@ class CT_Client: TCP_Client() {
         var pkg = Package()
         var res: Int? = null
 
-        var socket = Socket(SERVERIP, PORT)
 
-        var thread = Executors.newSingleThreadExecutor()
-
-        thread.execute() {
-            while (true) {
-
+        while (true) {
+            if (isAuth) {
                 //if smth doesn't work, change servSoc to socket
-                pkg = recvPkg(socket)
+                pkg = recvPkg(sock!!)
 
-                Log.i("I-CTC-PKG", "${pkg.type} ${pkg.subtype} ${pkg.toUser} ${pkg.fromUser}")
+                //Log.i("I-CTC-PKG", "${pkg.type} ${pkg.subtype} ${pkg.toUser} ${pkg.fromUser}")
+                //Log.i("I-CTC-PKG", pkg.data.toString())
 
                 if (pkg.type == T_REQUEST ||
                     pkg.type == T_RESPONSE ||
-                    pkg.type == T_NOANS) {
+                    pkg.type == T_NOANS
+                ) {
                     if (pkg.subtype == ST_SIP) {
                         if (!sip.handle(pkg)) {
                             sip.close()
@@ -56,18 +55,17 @@ class CT_Client: TCP_Client() {
                         }
                     }
                 }
-
             }
 
-            thread.shutdown()
         }
+
+
 
     }
 
     //check for null?
-    fun auth(username: String): Boolean {
+    fun auth(): Boolean {
 
-        currentUser = username
 
         var pkg = Package()
         pkg.type = T_REQUEST
@@ -76,33 +74,53 @@ class CT_Client: TCP_Client() {
         pkg.toUser = "SERVER"
         pkg.data[0] = 0
 
-        var socket = setup(SERVERIP, PORT)
-
         //if smth doesn't work, change servSoc to socket
-            sendPkg(socket, pkg)
+        sendPkg(sock!!, pkg)
 
-            pkg = recvPkg(socket)
+        pkg = recvPkg(sock!!)
 
-            Log.i("I-CTC-AUTH-PKG", pkg.data.toString())
+        //Log.i("I-CTC-AUTH-PKG", pkg.data.toString())
 
-            if (pkg.type == T_RESPONSE && pkg.subtype == ST_AUTH) {
-                return true
+        if (pkg.type == T_RESPONSE && pkg.subtype == ST_AUTH) {
+            isAuth = true
+            return true
+        } else {
+            if (pkg.subtype == ET_USREXIST) {
+                //Log.i("I-CTC-AUTH-RES", "User with the same name already exists")
+            } else if (pkg.subtype == ET_USRINCORRECT) {
+                //Log.i("I-CTC-AUTH-RES", "Username is incorrect")
             } else {
-                if (pkg.subtype == ET_USREXIST) {
-                    Log.i("I-CTC-AUTH-RES", "User with the same name already exists")
-                } else if (pkg.subtype == ET_USRINCORRECT) {
-                    Log.i("I-CTC-AUTH-RES", "Username is incorrect")
-                } else {
-                    Log.i("I-CTC-AUTH-RES", "Error")
-                }
-                return false
+                //Log.i("I-CTC-AUTH-RES", "Error")
             }
+            return false
+        }
 
 
     }
 
     fun packageSender() {
 
+        var pkg = Package()
+
+        while (true) {
+            if (isAuth) {
+
+                if (!outgoingPackages.isEmpty()) {
+
+                    pkg = outgoingPackages.first()
+                    sendPkg(sock!!, pkg)
+                    outgoingPackages.poll()
+                    pkg.clear()
+
+                }
+            }
+
+        }
+
+    }
+
+    fun release() {
+        sip.release()
     }
 
 }
